@@ -1549,7 +1549,7 @@ function resolvesToHome(p: string): boolean {
   catch { return p === homedir(); }
 }
 
-export function forkWorker(ds: DaemonSession, prompt: string, resumeOrTurnId: boolean | string = false): void {
+export function forkWorker(ds: DaemonSession, prompt: string, resumeOrTurnId: boolean | string | { resume?: boolean; turnId?: string } = false): void {
   const cb = requireCallbacks();
   const bot = getBot(ds.larkAppId);
   const botCfg = bot.config;
@@ -1569,6 +1569,9 @@ export function forkWorker(ds: DaemonSession, prompt: string, resumeOrTurnId: bo
   let initTurnId: string | undefined;
   if (typeof resumeOrTurnId === 'string') {
     initTurnId = resumeOrTurnId;
+  } else if (typeof resumeOrTurnId === 'object' && resumeOrTurnId !== null) {
+    resume = resumeOrTurnId.resume === true;
+    initTurnId = resumeOrTurnId.turnId;
   } else {
     resume = resumeOrTurnId;
   }
